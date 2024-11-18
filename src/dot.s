@@ -38,6 +38,7 @@ loop_start:
     bge t1, a2, loop_end
     # TODO: Add your own implementation
 
+
 loop_end:
     mv a0, t0
     jr ra
