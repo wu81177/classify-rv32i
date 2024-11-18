@@ -7,3 +7,5 @@ This part requires a loop to traverse the entire array. If a larger value is fou
 This function needs to traverse the entire array and replace any number less than 0 with 0.
 ## dot.s
 To complete this part, I first wrote a multiplication function. It begins by XOR the two input integers and then left-shifting the result by 31 bits to determine the sign of the product. Next, it takes the absolute values of the two inputs and performs multiplication using a long-multiplication approach. This involves iterating through the LSB of the multiplier: if it is 1, the result is incremented by the multiplicand. The multiplier is then shifted right by one bit, and the multiplicand is shifted left by one bit, repeating until the multiplier becomes zero. In the end, adjust the product to the appropriate sign. In the dot function, this multiplication is used in two places: for calculating index * stride and for multiplying two elements.
+## read_matrix.s and write_matrix.s
+Both of these functions only require modifying the part with the mul instruction. I directly copied the multiplication function from dot.s for use.
