@@ -42,8 +42,8 @@ turn0:
     j loop_start
 
 loop_end:
-    addi a0, t1, 0 
     jr ra
+    
 error:
     li a0, 36          
     j exit          
