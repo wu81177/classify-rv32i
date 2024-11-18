@@ -167,6 +167,15 @@ classify:
     lw t0, 0(s3)
     lw t1, 0(s8)
     # mul a0, t0, t1 # FIXME: Replace 'mul' with your own implementation
+    mv a5, t0
+    mv a6, t1
+    addi sp, sp, -4
+    sw ra, 0(sp)
+    jal start_mul
+    lw ra, 0(sp)
+    addi sp, sp, 4
+    mv a0, a5
+    
     slli a0, a0, 2
     jal malloc 
     beq a0, x0, error_malloc
@@ -205,6 +214,14 @@ classify:
     lw t1, 0(s8)
     # mul a1, t0, t1 # length of h array and set it as second argument
     # FIXME: Replace 'mul' with your own implementation
+    mv a5, t0
+    mv a6, t1
+    addi sp, sp, -4
+    sw ra, 0(sp)
+    jal start_mul
+    lw ra, 0(sp)
+    addi sp, sp, 4
+    mv a1, a5
     
     jal relu
     
@@ -227,6 +244,15 @@ classify:
     lw t0, 0(s3)
     lw t1, 0(s6)
     # mul a0, t0, t1 # FIXME: Replace 'mul' with your own implementation
+    mv a5, t0
+    mv a6, t1
+    addi sp, sp, -4
+    sw ra, 4(sp)
+    jal start_mul
+    lw ra, 0(sp)
+    addi sp, sp, 4
+    mv a0, a5
+
     slli a0, a0, 2
     jal malloc 
     beq a0, x0, error_malloc
@@ -286,8 +312,16 @@ classify:
     mv a0, s10 # load o array into first arg
     lw t0, 0(s3)
     lw t1, 0(s6)
-    mul a1, t0, t1 # load length of array into second arg
+    # mul a1, t0, t1 # load length of array into second arg
     # FIXME: Replace 'mul' with your own implementation
+    mv a5, t0
+    mv a6, t1
+    addi sp, sp, -4
+    sw ra, 0(sp)
+    jal start_mul
+    lw ra, 0(sp)
+    addi sp, sp, 4
+    mv a1, a5
     
     jal argmax
     
@@ -384,3 +418,35 @@ error_args:
 error_malloc:
     li a0, 26
     j exit
+
+
+# multiplier (a5*a6; return a5)
+start_mul:
+    xor t6, a5, a6            # mul sign
+    srli t6, t6, 31
+    li t3, 0
+
+    bge a5, zero, skip_0abs
+    sub a5, zero, a5
+skip_0abs:
+    bge a6, zero, mul_loop
+    sub a6, zero, a6
+
+mul_loop:
+    beq a6, zero, mul_end
+    andi t2, a6, 1
+    beq t2, zero, skip_accu
+
+    add t3, t3, a5
+
+skip_accu:
+    slli a5, a5, 1
+    srli a6, a6, 1
+    j mul_loop
+
+mul_end:
+    beq t6, zero, positive
+    sub t3, zero, t3
+positive:
+    add a5, zero, t3
+    jr ra
