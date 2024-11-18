@@ -76,6 +76,14 @@ read_matrix:
 
     # mul s1, t1, t2   # s1 is number of elements
     # FIXME: Replace 'mul' with your own implementation
+    mv a5, t1
+    mv a6, t2
+    addi sp, sp, -4
+    sw ra, 0(sp)
+    jal start_mul
+    lw ra, 0(sp)
+    addi sp, sp, 4
+    mv s1, a5
 
     slli t3, s1, 2
     sw t3, 24(sp)    # size in bytes
@@ -143,3 +151,35 @@ error_exit:
     lw s4, 20(sp)
     addi sp, sp, 40
     j exit
+
+
+# multiplier (a5*a6; return a5)
+start_mul:
+    xor t6, a5, a6            # mul sign
+    srli t6, t6, 31
+    li t3, 0
+
+    bge a5, zero, skip_0abs
+    sub a5, zero, a5
+skip_0abs:
+    bge a6, zero, mul_loop
+    sub a6, zero, a6
+
+mul_loop:
+    beq a6, zero, mul_end
+    andi t2, a6, 1
+    beq t2, zero, skip_accu
+
+    add t3, t3, a5
+
+skip_accu:
+    slli a5, a5, 1
+    srli a6, a6, 1
+    j mul_loop
+
+mul_end:
+    beq t6, zero, positive
+    sub t3, zero, t3
+positive:
+    add a5, zero, t3
+    jr ra

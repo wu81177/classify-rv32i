@@ -63,6 +63,14 @@ write_matrix:
 
     # mul s4, s2, s3   # s4 = total elements
     # FIXME: Replace 'mul' with your own implementation
+    mv a5, s2
+    mv a6, s3
+    addi sp, sp, -4
+    sw ra, 0(sp)
+    jal start_mul
+    lw ra, 0(sp)
+    addi sp, sp, 4
+    mv s4, a5
 
     # write matrix data to file
     mv a0, s0
@@ -113,3 +121,35 @@ error_exit:
     lw s4, 20(sp)
     addi sp, sp, 44
     j exit
+
+
+# multiplier (a5*a6; return a5)
+start_mul:
+    xor t6, a5, a6            # mul sign
+    srli t6, t6, 31
+    li t3, 0
+
+    bge a5, zero, skip_0abs
+    sub a5, zero, a5
+skip_0abs:
+    bge a6, zero, mul_loop
+    sub a6, zero, a6
+
+mul_loop:
+    beq a6, zero, mul_end
+    andi t2, a6, 1
+    beq t2, zero, skip_accu
+
+    add t3, t3, a5
+
+skip_accu:
+    slli a5, a5, 1
+    srli a6, a6, 1
+    j mul_loop
+
+mul_end:
+    beq t6, zero, positive
+    sub t3, zero, t3
+positive:
+    add a5, zero, t3
+    jr ra
