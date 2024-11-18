@@ -11,3 +11,5 @@ As for the multiplication function, I used a5 and a6 as input/output because the
 In the dot function, this multiplication is used in two places: for calculating index * stride and for multiplying two elements.
 ## read_matrix.s and write_matrix.s
 Both of these functions only require modifying the part with the mul instruction. I directly copied the multiplication function from dot.s for use.
+## classify.s
+Also uses the multiplication function from dot.s.
