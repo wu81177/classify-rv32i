@@ -1,4 +1,6 @@
 # Assignment 2: Classify
+All tests completed.
+Ran 46 tests in 40.144s
 ## abs.s
 For cases less than zero, I store 0 - t0 into t0, achieving the effect of negation.
 ## argmax.s
@@ -13,3 +15,5 @@ In the dot function, this multiplication is used in two places: for calculating 
 Both of these functions only require modifying the part with the mul instruction. I directly copied the multiplication function from dot.s for use.
 ## classify.s
 Also uses the multiplication function from dot.s.
+## matmul.s
+This function may seem complex, but as long as I focus on understanding the variables stored in each register, I can work it out by updating the index and address after each iteration of the inner and outer loops.
